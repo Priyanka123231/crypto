@@ -1,31 +1,41 @@
- #include <iostream>
+#include <iostream>
 using namespace std;
 
-int simpleHash(const string& message) {
-    int hashValue = 0;
-    for (char c : message) {
-        hashValue += static_cast<int>(c);
+int extendedEuclidean(int a, int b, int* x, int* y) {
+    if (b == 0) {
+        *x = 1;
+        *y = 0;
+        return a;
     }
-    return hashValue;
+
+    int x1, y1;
+    int gcd = extendedEuclidean(b, a % b, &x1, &y1);
+
+    *x = y1;
+    *y = x1 - (a / b) * y1;
+
+    return gcd;
+}
+
+int multiplicativeInverse(int a, int m) {
+    int x, y;
+    int gcd = extendedEuclidean(a, m, &x, &y);
+    if (gcd != 1) {
+        cout << "Error: Modular inverse does not exist.";
+        return -1;
+    }
+
+    // Ensure the result is positive
+    int inverse = (x % m + m) % m;
+    return inverse;
 }
 
 int main() {
-    string message = "Hello, world!";
-    int originalHash = simpleHash(message);
+    int number = 7;
+    int modulo = 26;
 
-    cout << "Original Message: " << message << endl;
-    cout << "Original Hash: " << originalHash << endl;
-
-    // Simulate receiver
-    int receivedHash = simpleHash(message);
-        cout << "Recived Hash: " << receivedHash << endl;
-
-
-    if (receivedHash == originalHash) {
-        cout << "Data integrity verified. Hash matches." << endl;
-    } else {
-        cout << "Data integrity compromised. Hash does not match." << endl;
-    }
+    int inverse = multiplicativeInverse(number, modulo);
+    cout << "Multiplicative Inverse: " << inverse << endl;
 
     return 0;
 }
